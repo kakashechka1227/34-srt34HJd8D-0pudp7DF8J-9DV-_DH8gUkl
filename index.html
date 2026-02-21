@@ -28,23 +28,17 @@ body {
     color: white;
 }
 
-/* Карточка */
 .card {
-    position: relative;
-    padding: 40px 50px;
-    border-radius: 24px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(18px);
-    box-shadow:
-        0 10px 40px rgba(0,0,0,0.6),
-        inset 0 0 0 1px rgba(255,255,255,0.05);
-    transition: transform 0.12s ease;
-    cursor: pointer;
-    max-width: 90vw;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.card:active {
-    transform: scale(0.97);
+.card:focus {
+    outline: none;
+}
+
+.card:focus-visible {
+    outline: none;
 }
 
 .text {
@@ -98,7 +92,7 @@ body {
 </div>
 
 <div class="toast" id="toast">
-    <span>хуй тебе)</span>
+    <span>Переписывай вручную</span>
 </div>
 
 <script>
