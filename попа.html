@@ -2,98 +2,101 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Secure View</title>
 
 <style>
-    * {
+    html, body {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    body {
-        height: 100vh;
-        width: 100vw;
-        background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+        height: 100%;
+        width: 100%;
+        background: #0e0e0e;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         overflow: hidden;
-        color: white;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .container {
-        font-size: 2vw;
-        text-align: center;
-        padding: 40px;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.05);
-        box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    .text {
+        font-size: clamp(18px, 4vw, 40px);
         letter-spacing: 2px;
+        text-align: center;
+        padding: 20px 30px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.04);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
         word-break: break-all;
     }
 
-    .overlay {
+    .blur {
         position: fixed;
         inset: 0;
-        background: black;
+        background: #000;
         display: none;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-size: 2rem;
         z-index: 9999;
     }
 </style>
 </head>
 <body>
 
-<div class="container">
-    QHJlY2tfZnVja2JvdCAKNTQwNjQwMTY=
+<div class="text">
+QHJlY2tfZnVja2JvdCAKNTQwNjQwMTY=
 </div>
 
-<div class="overlay" id="overlay">
-    Захват экрана запрещён
-</div>
+<div class="blur" id="blur"></div>
 
 <script>
-    // Блокировка правого клика
+    // Запрет правого клика
     document.addEventListener("contextmenu", e => e.preventDefault());
 
-    // Блокировка копирования
+    // Запрет копирования
     document.addEventListener("copy", e => e.preventDefault());
     document.addEventListener("cut", e => e.preventDefault());
+
+    // Запрет горячих клавиш
     document.addEventListener("keydown", function(e) {
-        if (e.ctrlKey && ["c","u","s","p"].includes(e.key.toLowerCase())) {
+        if (
+            (e.ctrlKey || e.metaKey) &&
+            ["c","x","u","s","p","a"].includes(e.key.toLowerCase())
+        ) {
             e.preventDefault();
         }
+
         if (e.key === "PrintScreen") {
-            triggerOverlay();
+            triggerBlur();
         }
     });
 
-    // Попытка отловить переключение вкладки
+    // Затемнение при скрытии вкладки (Android / iOS / ПК)
     document.addEventListener("visibilitychange", function() {
         if (document.hidden) {
-            triggerOverlay();
+            triggerBlur();
         }
     });
 
-    function triggerOverlay() {
-        const overlay = document.getElementById("overlay");
-        overlay.style.display = "flex";
+    // Затемнение при потере фокуса
+    window.addEventListener("blur", triggerBlur);
+
+    function triggerBlur() {
+        const blur = document.getElementById("blur");
+        blur.style.display = "block";
         setTimeout(() => {
-            overlay.style.display = "none";
-        }, 2000);
+            blur.style.display = "none";
+        }, 1500);
     }
 
-    // Очистка буфера при PrintScreen (работает не везде)
-    navigator.clipboard && navigator.clipboard.writeText("");
+    // Очистка выделения
+    document.addEventListener("selectionchange", () => {
+        window.getSelection().removeAllRanges();
+    });
 </script>
 
 </body>
